@@ -24,6 +24,7 @@ solar_system_simulation/
 │   ├── planet.py            # Defines the Planet class
 │   ├── moon.py              # Defines the Moon class
 │   ├── asteroid.py          # Defines the Asteroid class
+├── ├── gc.py                # Defines the gc class
 │   ├── utils.py             # Utility functions
 ├── requirements.txt         # Project dependencies
 └── README.md                # Project documentation
