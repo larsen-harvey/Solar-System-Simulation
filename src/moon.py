@@ -18,10 +18,12 @@ class Moon(Planet):
     argument_of_periapsis (float): The argument of periapsis in radians.
     parent_planet (str): The name of the parent planet.
     mean_anomaly (float): The mean anomaly of the moon in radians.
-    texture (str): The path to the texture image for the moon.
+    texture_path (str): The path to the texture image for the moon.
     """
-    def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, parent_planet, mean_anomaly=0, texture_path="self.texture"):
-        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly, texture_path)
+    def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, parent_planet, mean_anomaly=0, texture_path=None):
+        # Initialize the parent class (Planet) with the appropriate arguments
+        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly)
+        # Add the parent_planet attribute specific to the Moon class
         self.parent_planet = parent_planet
 
     def __post_init__(self):

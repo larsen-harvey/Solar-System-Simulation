@@ -22,7 +22,7 @@ from PIL import Image
 from dataclasses import dataclass
 
 # Close any existing plots
-matplotlib.pyplot.close()
+matplotlib.pyplot.close() # type: ignore
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
@@ -47,7 +47,7 @@ class Planet:
     longitude_of_ascending_node: float
     argument_of_periapsis: float
     mean_anomaly: float = 0
-    texture: str = None  # Path to texture image
+    texture: str = None  # type: ignore # Path to texture image
     x: float = 0  # x position in kilometers
     y: float = 0  # y position in kilometers
     z: float = 0  # z position in kilometers

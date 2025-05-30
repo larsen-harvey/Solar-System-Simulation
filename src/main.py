@@ -148,8 +148,7 @@ def main(simulation_years=15):
     # Updates the positions of celestial bodies for each frame in the animation.
     def update(frame):
         ...
-    }
-    """
+    }"""
 
     dt = 1 / 365  # time step duration in years (1 day)
     time_steps = int (dt)
@@ -169,9 +168,5 @@ def main(simulation_years=15):
     return ani
     return positions
 
-def new_func(main):
-    if name == "__main__":
-        main(simulation_years = 15)
-        
-        new_func(main);
-print ("hello world")
+if __name__ == "__main__":
+    main(simulation_years=15)

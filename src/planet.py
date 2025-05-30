@@ -24,6 +24,17 @@ class Planet:
 
     AU = 1.496e8  # 1 AU in kilometers
 
+    def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, texture_path=None):
+        self.name = name
+        self.mass = mass
+        self.radius = radius
+        self.semi_major_axis = semi_major_axis
+        self.eccentricity = eccentricity
+        self.inclination = inclination
+        self.longitude_of_ascending_node = longitude_of_ascending_node
+        self.argument_of_periapsis = argument_of_periapsis
+        self.texture = texture_path  # Assign the texture_path to the texture attribute
+
     def calculate_orbital_period(self, sun_mass):
         """
         Calculate the orbital period of the planet.

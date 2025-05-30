@@ -1,8 +1,9 @@
 import math
 from planet import Planet
 from asteroid import Asteroid
+from moon import Moon
 from sun import Sun
-from GC import G
+from GC import GravitationalConstants
 
 class SolarSystem:
     def __init__(self, sun=None):
@@ -13,13 +14,13 @@ class SolarSystem:
             self.sun = Sun()
         else:
             self.sun = sun
-
-    def add_planet(self, planet):
+           
+    def add_planet(self, Planet):
         # Add a planet to the solar system if it doesn't already exist
-        if planet.name not in [p.name for p in self.planet]:
-            self.planet.append(planet)
+        if Planet.name not in [p.name for p in self.planet]:
+            self.planet.append(Planet)
         else:
-            print(f"Planet {planet.name} already exists in the solar system.")
+            print(f"Planet {Planet.name} already exists in the solar system.")
     def add_moon(self, moon):
     # Add a moon to the solar system if it doesn't already exist
         if any(planet.name == moon.parent_planet for planet in self.planet):
@@ -30,7 +31,7 @@ class SolarSystem:
         if isinstance(asteroid, Asteroid) and asteroid.name not in [a.name for a in self.asteroids]:
             self.asteroids.append(asteroid)
 
-    def calculate_orbital_characteristics(self, dt):
+    def calculate_orbital_characteristics(self, dt,):
         # Calculate the orbital characteristics of each planet
         for i, planet in enumerate(self.planet):
             # Use the inclination directly from the planet's attribute
@@ -42,9 +43,12 @@ class SolarSystem:
                 eccentric_anomaly = planet.mean_anomaly + planet.eccentricity * math.sin(eccentric_anomaly)
 
             # Calculate the true anomaly from the eccentric anomaly
-            2 * math.atan2(math.sqrt(1 + planet.eccentricity) * math.sin(eccentric_anomaly / 2), math.sqrt(1 - planet.eccentricity) * math.cos(eccentric_anomaly / 2))
+            true_anomaly = 2 * math.atan2(
+                math.sqrt(1 + planet.eccentricity) * math.sin(eccentric_anomaly / 2),
+                math.sqrt(1 - planet.eccentricity) * math.cos(eccentric_anomaly / 2)
+            )
             # Calculate the orbital period
-            T = (2 * math.pi) * math.sqrt((planet.semi_major_axis ** 3) / (G * self.sun.mass))
+            T = (2 * math.pi) * math.sqrt((planet.semi_major_axis ** 3) / (GravitationalConstants.G * self.sun.mass))
             # Update the mean anomaly considering the time step dt
             planet.mean_anomaly = (planet.mean_anomaly + 2 * math.pi * dt / T) % (2 * math.pi)
 
@@ -70,7 +74,7 @@ class SolarSystem:
                     x1, y1, z1 = planet1.calculate_position(planet1.mean_anomaly)
                     x2, y2, z2 = planet2.calculate_position(planet2.mean_anomaly)
                     r12 = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2)
-                    F_g = (G * planet1.mass * planet2.mass) / (r12 ** 2)
+                    F_g = (GravitationalConstants * planet1.mass * planet2.mass) / (r12 ** 2)
                     force_x += F_g * (x2 - x1) / r12
                     force_y += F_g * (y2 - y1) / r12
                     force_z += F_g * (z2 - z1) / r12
@@ -86,6 +90,6 @@ class SolarSystem:
             planet1.z += planet1.vz * dt
 
             # Print the gravitational interaction
-        print(f"Planet {i+1} updated position: ({planet1.x}, {planet1.y}, {planet1.z})")
-        positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
+            print(f"Planet {i+1} updated position: ({planet1.x}, {planet1.y}, {planet1.z})")
+            positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
         return positions
