@@ -6,6 +6,7 @@ from planet import Planet
 from moon import Moon
 from asteroid import Asteroid
 from solar_system import SolarSystem
+from time import time_steps
 
 def calculate_position(self, dt):
     system = SolarSystem()
@@ -151,6 +152,7 @@ def main(simulation_years=15):
     }
     """
 
+    dt = 1 / 365  # time step duration in years (1 day)
     positions = system.calculate_gravitational_interactions(dt)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -163,7 +165,7 @@ def main(simulation_years=15):
             line.set_data(x, y)
             line.set_3d_properties(z)
         return lines.values()
-    ani = FuncAnimation(fig, update, frames=time_steps, blit=False
+    ani = FuncAnimation(fig, update, frames=time_steps, blit=False)
     return ani
     return positions
 
@@ -171,4 +173,4 @@ def new_func(main):
     if name == "__main__":
         main(simulation_years = 15)
         
-        new_func(main)
+        new_func(main);
