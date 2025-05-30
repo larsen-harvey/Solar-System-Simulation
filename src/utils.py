@@ -1,3 +1,4 @@
+from math import sqrt
 from PIL import Image
 import numpy as np
 
@@ -11,7 +12,7 @@ def load_texture(texture_path):
     Returns:
     numpy.ndarray: The normalized image array or None if the file is not found.
     """
-    texture_path (img)
+    texture_path (Image)
     try:
         img = Image.open(texture_path)
         img = img.resize((50, 25))  # Resize for consistency
@@ -31,8 +32,7 @@ def calculate_gravitational_force(m1, m2, distance):
 
     Returns:
     float: The gravitational force in newtons.
-    """
-    from math import sqrt
+    """ 
 
     if distance == 0:
         return 0  # Avoid division by zero

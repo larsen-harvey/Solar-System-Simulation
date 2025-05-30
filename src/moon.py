@@ -20,8 +20,8 @@ class Moon(Planet):
     mean_anomaly (float): The mean anomaly of the moon in radians.
     texture (str): The path to the texture image for the moon.
     """
-    def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, parent_planet, mean_anomaly=0, texture=None):
-        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly, texture)
+    def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, parent_planet, mean_anomaly=0, texture_path="self.texture"):
+        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly, texture_path)
         self.parent_planet = parent_planet
 
     def __post_init__(self):
@@ -30,6 +30,3 @@ class Moon(Planet):
         """
         if self.texture:
             self.texture = load_texture(self.texture)
-
-    mean_anomaly: float = 0
-    texture: str = load_texture  # Path to texture image

@@ -1,6 +1,6 @@
 from utils import load_texture
 from dataclasses import dataclass
-from PIL import JpegPresets
+from PIL import Image
 import math
 
 @dataclass
@@ -14,7 +14,7 @@ class Planet:
     longitude_of_ascending_node: float
     argument_of_periapsis: float
     mean_anomaly: float = 0
-    texture: str = None  # Path to texture image
+    texture_path: str = "self.texture"  # Path to texture image
     x: float = 0  # x position in kilometers
     y: float = 0  # y position in kilometers
     z: float = 0  # z position in kilometers
@@ -62,5 +62,6 @@ class Planet:
         """
         Load the texture image during initialization if a texture path is provided.
         """
+        
         if self.texture:
-            self.texture = load_texture( self.texture )
+            self.texture = load_texture("self.texture");

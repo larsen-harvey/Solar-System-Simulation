@@ -19,8 +19,8 @@ class Asteroid(Planet):
     mean_anomaly (float): The mean anomaly of the asteroid in radians.
     texture (str): The path to the texture image for the asteroid.
     """
-    def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly=0, texture=None):
-        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly, texture)
+    def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly=0, texture_path="self.texture"):
+        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly, texture_path)
         self.__post_init__()
 
     def __post_init__(self):
@@ -28,4 +28,4 @@ class Asteroid(Planet):
         Load the texture image during initialization if a texture path is provided.
         """
         if self.texture:
-            self.texture = load_texture(self.texture)
+            self.texture = load_texture ("self.texture")
