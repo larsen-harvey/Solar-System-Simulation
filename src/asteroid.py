@@ -20,7 +20,8 @@ class Asteroid(Planet):
     texture (str): The path to the texture image for the asteroid.
     """
     def __init__(self, name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly=0, texture_path="self.texture"):
-        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly, texture_path)
+        super().__init__(name, mass, radius, semi_major_axis, eccentricity, inclination, longitude_of_ascending_node, argument_of_periapsis, mean_anomaly)
+        self.texture_path = texture_path
         self.__post_init__()
 
     def __post_init__(self):

@@ -74,7 +74,7 @@ class SolarSystem:
                     x1, y1, z1 = planet1.calculate_position(planet1.mean_anomaly)
                     x2, y2, z2 = planet2.calculate_position(planet2.mean_anomaly)
                     r12 = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2)
-                    F_g = (GravitationalConstants * planet1.mass * planet2.mass) / (r12 ** 2)
+                    F_g = (GravitationalConstants.G * planet1.mass * planet2.mass) / (r12 ** 2)
                     force_x += F_g * (x2 - x1) / r12
                     force_y += F_g * (y2 - y1) / r12
                     force_z += F_g * (z2 - z1) / r12
