@@ -165,8 +165,9 @@ def main(simulation_years=15):
             line.set_3d_properties (z)
         return lines.values()
     ani = FuncAnimation(fig, update, frames=time_steps, blit=False)
+    plt.show()  # Ensure the animation is displayed
     return ani
-    return positions
-
+    # Run the simulation and plot the results
+    
 if __name__ == "__main__":
     main(simulation_years=15)
