@@ -126,6 +126,9 @@ def main(simulation_years=15):
     system.add_asteroid(Asteroid("Bennu", 7.329e10, 0.245, 1.126 * Planet.AU, 0.203, 6.034, 2.060, 101.703))
     system.add_asteroid(Asteroid("Ryugu", 4.5e11, 0.435, 1.189 * Planet.AU, 0.190, 5.883, 251.47, 211.44))
 
+    # Simulate and plot the solar system
+    ani = simulate_and_plot(system, simulation_years)
+def simulate_and_plot(system, simulation_years=15):
     """
     Simulate the solar system and plot the results.
 
@@ -153,6 +156,10 @@ def main(simulation_years=15):
     positions = system.calculate_gravitational_interactions(dt)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+
+    # Add a background image
+    background_image = plt.imread("textures/background.jpg")  # Ensure the image exists in the 'textures' folder
+    ax.imshow(background_image, extent=(-1, 1, -1, 1), aspect='auto', zorder=-1)
 
     lines = {planet.name: ax.plot([], [], [])[0] for planet in system.planet if hasattr(planet, 'name')}
 
