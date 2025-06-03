@@ -10,7 +10,6 @@ from solar_system import SolarSystem
 def calculate_position(self, dt):
     system = SolarSystem()
 
-    # Example: Return a dummy position (x, y, z)
     positions = {planet.name: [] for planet in system.planet if hasattr(planet, 'name')}
     for i, planet1 in enumerate(system.planet):
         if not all(hasattr(planet1, attr) for attr in ['x', 'y', 'z']):
@@ -127,7 +126,6 @@ def main(simulation_years=15):
     system.add_asteroid(Asteroid("Bennu", 7.329e10, 0.245, 1.126 * Planet.AU, 0.203, 6.034, 2.060, 101.703))
     system.add_asteroid(Asteroid("Ryugu", 4.5e11, 0.435, 1.189 * Planet.AU, 0.190, 5.883, 251.47, 211.44))
 
-    
     """
     Simulate the solar system and plot the results.
 
@@ -151,7 +149,7 @@ def main(simulation_years=15):
     }"""
 
     dt = 1 / 365  # time step duration in years (1 day)
-    time_steps = int (dt)
+    time_steps = int(simulation_years * 365)  # Total number of days in the simulation
     positions = system.calculate_gravitational_interactions(dt)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -160,9 +158,12 @@ def main(simulation_years=15):
 
     def update(frame, positions, lines):
         for planet_name, line in lines.items():
-            x, y, z = positions[planet_name][frame]
-            line.set_data(x, y)
-            line.set_3d_properties (z)
+            if planet_name in positions and frame < len(positions[planet_name]):
+                x, y, z = positions[planet_name][frame]
+                line.set_data([x], [y])
+                line.set_3d_properties([z])
+            else:
+                print(f"Warning: No data for {planet_name} at frame {frame}")
         return lines.values()
     ani = FuncAnimation(fig, update, frames=time_steps, blit=False)
     plt.show()  # Ensure the animation is displayed
