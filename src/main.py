@@ -179,3 +179,4 @@ def simulate_and_plot(system, simulation_years=15):
     
 if __name__ == "__main__":
     main(simulation_years=15)
+    print ("hello world")
