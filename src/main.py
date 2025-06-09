@@ -6,28 +6,29 @@ from planet import Planet
 from moon import Moon
 from asteroid import Asteroid
 from solar_system import SolarSystem
-from src import planet
 
-def calculate_position(self, dt):
+def calculate_position(dt, positions):
     system = SolarSystem()
 
+    if not hasattr(system, 'planet') or not isinstance(system.planet, list):
+        raise ValueError("SolarSystem object does not have a valid 'planet' attribute.")
     positions = {planet.name: [] for planet in system.planet if hasattr(planet, 'name')}
     for i, planet1 in enumerate(system.planet):
         if not all(hasattr(planet1, attr) for attr in ['x', 'y', 'z']):
             continue  # Skip if planet1 lacks position attributes
-        for j, planet2 in enumerate(system.planet):
-            if i != j and all(hasattr(planet2, attr) for attr in ['x', 'y', 'z']):
-                r12 = math.sqrt((planet2.x - planet1.x)**2 + (planet2.y - planet1.y)**2 + (planet2.z - planet1.z)**2)
-                if r12 == 0:
-                    continue  # Skip calculation if distance is zero
+        else:
         # Example gravitational interaction calculation
-        for i, planet1 in enumerate(system.planet):
+            for i, planet1 in enumerate(system.planet):
+                if not all(hasattr(planet1, attr) for attr in ['x', 'y', 'z', 'vx', 'vy', 'vz', 'mass', 'name']):
+                    continue  # Skip if planet1 lacks required attributes
             for j, planet2 in enumerate(system.planet):
-                if i != j:
+                if i != j and all(hasattr(planet2, attr) for attr in ['x', 'y', 'z', 'mass']):
                     dx = planet2.x - planet1.x
                     dy = planet2.y - planet1.y
                     dz = planet2.z - planet1.z
                     distance = math.sqrt(dx**2 + dy**2 + dz**2)
+                    if distance == 0:
+                        continue  # Skip calculation if distance is zero
                     force = (6.67430e-11 * planet1.mass * planet2.mass) / (distance**2)
                     ax = force * dx / distance / planet1.mass
                     ay = force * dy / distance / planet1.mass
@@ -38,18 +39,23 @@ def calculate_position(self, dt):
             planet1.x += planet1.vx * dt
             planet1.y += planet1.vy * dt
             planet1.z += planet1.vz * dt
-            
-            """positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
-            print(f"Planet {i+1}:")
-            print(f"Name: {planet.name}")
-            print(f"Mass: {planet.mass} kg")
-            print(f"Radius: {planet.radius} km")
-            print(f"Semi-major Axis: {planet.semi_major_axis} AU")
-            print(f"Eccentricity: {planet.eccentricity}")
-            print(f"Inclination: {inclination} rad")
-            print(f"Longitude of Ascending Node: {planet.longitude_of_ascending_node} rad")
-            print(f"Argument of Periapsis: {planet.argument_of_periapsis} rad")
-            print(f"Orbital Period: {T / 86400} days"""
+            # Print the gravitational interaction
+            print(f"Planet {i+1} updated position: ({planet1.x}, {planet1.y}, {planet1.z})")
+            positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
+            print(f"{positions}")
+    return positions            
+
+"""positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
+print(f"Planet {i+1}:")
+print(f"Name: {planet.name}")
+print(f"Mass: {planet.mass} kg")
+print(f"Radius: {planet.radius} km")
+print(f"Semi-major Axis: {planet.semi_major_axis} AU")
+print(f"Eccentricity: {planet.eccentricity}")
+print(f"Inclination: {inclination} rad")
+print(f"Longitude of Ascending Node: {planet.longitude_of_ascending_node} rad")
+print(f"Argument of Periapsis: {planet.argument_of_periapsis} rad")
+print(f"Orbital Period: {T / 86400} days"""
 
 def main(simulation_years=15):
     """
@@ -169,8 +175,13 @@ def simulate_and_plot(system, simulation_years=15):
         return lines.values()
     
     # Add a background image
-    background_image = plt.imread("textures/astar.jpg")  # test texture
-    ax.imshow(background_image, extent=(-1, 1, -1, 1), aspect='auto', zorder=-1)
+    import os
+    texture_path = "textures/astar.jpg"
+    if os.path.exists(texture_path):
+        background_image = plt.imread(texture_path)  # test texture
+    # Removed recursive call to simulate_and_plot to prevent infinite recursion
+    else:
+        print(f"Warning: Background texture file '{texture_path}' not found.")
     
     # Simulate and plot the solar system
     ani = simulate_and_plot(system, simulation_years)
