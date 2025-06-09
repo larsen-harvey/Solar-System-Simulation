@@ -1,11 +1,12 @@
 import math
-from os import name
+from dataclasses import dataclass
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from planet import Planet
 from moon import Moon
 from asteroid import Asteroid
 from solar_system import SolarSystem
+from src import planet
 
 def calculate_position(self, dt):
     system = SolarSystem()
@@ -48,7 +49,7 @@ def calculate_position(self, dt):
             print(f"Inclination: {inclination} rad")
             print(f"Longitude of Ascending Node: {planet.longitude_of_ascending_node} rad")
             print(f"Argument of Periapsis: {planet.argument_of_periapsis} rad")
-            print(f"Orbital Period: {T / 86400} days")"""
+            print(f"Orbital Period: {T / 86400} days"""
 
 def main(simulation_years=15):
     """
@@ -70,7 +71,7 @@ def main(simulation_years=15):
     # Planets with textures
     system.add_planet(Planet("Mercury", 3.3022e23, 2439.7, 0.387098 * Planet.AU, 0.2056, 0, math.pi/4, math.pi/4, texture_path="textures/mercury.jpg"))
     system.add_planet(Planet("Venus", 4.8695e24, 6051.8, 0.723336 * Planet.AU, 0.0068, math.pi/2, math.pi/4, 3*math.pi/4, texture_path="textures/venus.jpg"))
-    system.add_planet(Planet("Earth", 5.972e24, 6371, 1.000 * Planet.AU, 0.0167, 0, 0, 0, texture_path="textures/earth.jpg"))
+    system.add_planet(Planet("Earth", 5.972e24, 6371, 1.000 * Planet.AU, 0.0167, 0, 0, 0, texture_path="textures/earthnight.jpg")) # test texture
     system.add_planet(Planet("Mars", 6.4171e23, 3389.5, 1.524 * Planet.AU, 0.0934, 0, 0, 0, texture_path="textures/mars.jpg"))
     system.add_planet(Planet("Jupiter", 1.8982e27, 69911, 5.2044 * Planet.AU, 0.0489, 0, 0, 0, texture_path="textures/jupiter.jpg"))
     system.add_planet(Planet("Saturn", 5.6834e26, 58232, 9.5826 * Planet.AU, 0.0565, 0, 0, 0, texture_path="textures/saturn.jpg"))
@@ -126,8 +127,6 @@ def main(simulation_years=15):
     system.add_asteroid(Asteroid("Bennu", 7.329e10, 0.245, 1.126 * Planet.AU, 0.203, 6.034, 2.060, 101.703))
     system.add_asteroid(Asteroid("Ryugu", 4.5e11, 0.435, 1.189 * Planet.AU, 0.190, 5.883, 251.47, 211.44))
 
-    # Simulate and plot the solar system
-    ani = simulate_and_plot(system, simulation_years)
 def simulate_and_plot(system, simulation_years=15):
     """
     Simulate the solar system and plot the results.
@@ -152,31 +151,34 @@ def simulate_and_plot(system, simulation_years=15):
     }"""
 
     dt = 1 / 365  # time step duration in years (1 day)
-    time_steps = int(simulation_years * 365)  # Total number of days in the simulation
-    positions = system.calculate_gravitational_interactions(dt)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-
-    # Add a background image
-    background_image = plt.imread("textures/background.jpg")  # Ensure the image exists in the 'textures' folder
-    ax.imshow(background_image, extent=(-1, 1, -1, 1), aspect='auto', zorder=-1)
-
-    lines = {planet.name: ax.plot([], [], [])[0] for planet in system.planet if hasattr(planet, 'name')}
+    time_steps = int(simulation_years * 365)  # Total number of days in the simulation
+    
 
     def update(frame, positions, lines):
+        print(f"Updating frame {frame}")  # Debugging output
         for planet_name, line in lines.items():
             if planet_name in positions and frame < len(positions[planet_name]):
                 x, y, z = positions[planet_name][frame]
+                print(f"Planet {planet_name}: Position ({x}, {y}, {z})")  # Debugging output
                 line.set_data([x], [y])
                 line.set_3d_properties([z])
             else:
                 print(f"Warning: No data for {planet_name} at frame {frame}")
         return lines.values()
+    
+    # Add a background image
+    background_image = plt.imread("textures/astar.jpg")  # test texture
+    ax.imshow(background_image, extent=(-1, 1, -1, 1), aspect='auto', zorder=-1)
+    
+    # Simulate and plot the solar system
+    ani = simulate_and_plot(system, simulation_years)
     ani = FuncAnimation(fig, update, frames=time_steps, blit=False)
     plt.show()  # Ensure the animation is displayed
     return ani
     # Run the simulation and plot the results
-    
+
 if __name__ == "__main__":
     main(simulation_years=15)
     print ("hello world")
