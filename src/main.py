@@ -7,7 +7,7 @@ from moon import Moon
 from asteroid import Asteroid
 from solar_system import SolarSystem
 
-def calculate_position(dt, positions):
+def calculate_position(dt, positions, system ):
     system = SolarSystem()
 
     if not hasattr(system, 'planet') or not isinstance(system.planet, list):
@@ -40,7 +40,7 @@ def calculate_position(dt, positions):
             planet1.y += planet1.vy * dt
             planet1.z += planet1.vz * dt
             # Print the gravitational interaction
-            print(f"Planet {i+1} updated position: ({planet1.x}, {planet1.y}, {planet1.z})")
+            print(f"\nPlanet {i+1} updated position: ({planet1.x}, {planet1.y}, {planet1.z})")
             positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
             print(f"{positions}")
     return positions            
@@ -134,6 +134,7 @@ def main(simulation_years=15):
     system.add_asteroid(Asteroid("Ryugu", 4.5e11, 0.435, 1.189 * Planet.AU, 0.190, 5.883, 251.47, 211.44))
 
 def simulate_and_plot(system, simulation_years=15):
+    system = SolarSystem
     """
     Simulate the solar system and plot the results.
 
@@ -151,21 +152,43 @@ def simulate_and_plot(system, simulation_years=15):
     For example:
     {
         "Earth": [(x1, y1, z1), (x2, y2, z2), ...],
-    # Updates the positions of celestial bodies for each frame in the animation.
-    def update(frame):
-        ...
-    }"""
+    }
+    """
 
     dt = 1 / 365  # time step duration in years (1 day)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     time_steps = int(simulation_years * 365)  # Total number of days in the simulation
-    
 
-    def update(frame, positions, lines):
-        print(f"Updating frame {frame}")  # Debugging output
-        for planet_name, line in lines.items():
-            if planet_name in positions and frame < len(positions[planet_name]):
+    # Calculate positions for all planets
+    positions = calculate_position(dt, None, None)
+
+    # Create a line for each planet
+    lines = {}
+    for planet_name in positions:
+        # Plot the initial position
+        x0, y0, z0 = positions[planet_name][0] if positions[planet_name] else (0, 0, 0)
+        line, = ax.plot([x0], [y0], [z0], marker='o', label=planet_name)
+        lines[planet_name] = line
+
+    ax.legend()
+
+    def update(frame):
+        print(f"\nUpdating frame {frame}\n")  # Debugging output
+    # Add a background image
+    import os
+    texture_path = "textures/astar.jpg"
+    if os.path.exists(texture_path):
+        background_image = plt.imread(texture_path)  # test texture
+        # You can use the background image as needed, e.g., as a plot background
+    else:
+        print(f"\n Warning: Background texture file '{texture_path}' not found.\n")
+
+    # Simulate and plot the solar system
+    ani = FuncAnimation(fig, update, frames=time_steps, blit=False) # type: ignore
+    plt.show()  # Ensure the animation is displayed
+    return ani
+    """# Run the simulation and plot the results
                 x, y, z = positions[planet_name][frame]
                 print(f"Planet {planet_name}: Position ({x}, {y}, {z})")  # Debugging output
                 line.set_data([x], [y])
@@ -188,8 +211,10 @@ def simulate_and_plot(system, simulation_years=15):
     ani = FuncAnimation(fig, update, frames=time_steps, blit=False)
     plt.show()  # Ensure the animation is displayed
     return ani
-    # Run the simulation and plot the results
+    # Run the simulation and plot the results"""
 
 if __name__ == "__main__":
+    calculate_position(system=SolarSystem, dt=1/365, positions=None )
     main(simulation_years=15)
+    simulate_and_plot(system=SolarSystem)
     print ("hello world")
