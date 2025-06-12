@@ -180,6 +180,7 @@ def simulate_and_plot(system, simulation_years=15):
     texture_path = "textures/astar.jpg"
     if os.path.exists(texture_path):
         background_image = plt.imread(texture_path)  # test texture
+        #plt.show(background_image)
         # You can use the background image as needed, e.g., as a plot background
     else:
         print(f"\n Warning: Background texture file '{texture_path}' not found.\n")
