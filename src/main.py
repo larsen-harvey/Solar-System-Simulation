@@ -7,28 +7,26 @@ from moon import Moon
 from asteroid import Asteroid
 from solar_system import SolarSystem
 
-def calculate_position(dt, positions, system ):
+def calculate_position(system, dt, positions ):
     system = SolarSystem()
 
-    if not hasattr(system, 'planet') or not isinstance(system.planet, list):
-        raise ValueError("SolarSystem object does not have a valid 'planet' attribute.")
     positions = {planet.name: [] for planet in system.planet if hasattr(planet, 'name')}
     for i, planet1 in enumerate(system.planet):
         if not all(hasattr(planet1, attr) for attr in ['x', 'y', 'z']):
             continue  # Skip if planet1 lacks position attributes
-        else:
+        for j, planet2 in enumerate(system.planet):
+            if i != j and all(hasattr(planet2, attr) for attr in ['x', 'y', 'z']):
+                r12 = math.sqrt((planet2.x - planet1.x)**2 + (planet2.y - planet1.y)**2 + (planet2.z - planet1.z)**2)
+                if r12 == 0:
+                    continue  # Skip calculation if distance is zero
         # Example gravitational interaction calculation
-            for i, planet1 in enumerate(system.planet):
-                if not all(hasattr(planet1, attr) for attr in ['x', 'y', 'z', 'vx', 'vy', 'vz', 'mass', 'name']):
-                    continue  # Skip if planet1 lacks required attributes
+        for i, planet1 in enumerate(system.planet):
             for j, planet2 in enumerate(system.planet):
-                if i != j and all(hasattr(planet2, attr) for attr in ['x', 'y', 'z', 'mass']):
+                if i != j:
                     dx = planet2.x - planet1.x
                     dy = planet2.y - planet1.y
                     dz = planet2.z - planet1.z
                     distance = math.sqrt(dx**2 + dy**2 + dz**2)
-                    if distance == 0:
-                        continue  # Skip calculation if distance is zero
                     force = (6.67430e-11 * planet1.mass * planet2.mass) / (distance**2)
                     ax = force * dx / distance / planet1.mass
                     ay = force * dy / distance / planet1.mass
@@ -36,13 +34,14 @@ def calculate_position(dt, positions, system ):
                     planet1.vx += ax * dt
                     planet1.vy += ay * dt
                     planet1.vz += az * dt
-            planet1.x += planet1.vx * dt
-            planet1.y += planet1.vy * dt
-            planet1.z += planet1.vz * dt
-            # Print the gravitational interaction
-            print(f"\nPlanet {i+1} updated position: ({planet1.x}, {planet1.y}, {planet1.z})")
-            positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
-            print(f"{positions}")
+                    planet1.x += planet1.vx * dt
+                    planet1.y += planet1.vy * dt
+                    planet1.z += planet1.vz * dt
+
+                     # Print the gravitational interaction
+                    print(f"Planet {i+1} updated position: ({planet1.x}, {planet1.y}, {planet1.z})")
+                    positions=[planet1.name].append((planet1.x, planet1.y, planet1.z))
+                    print (f"{positions}")
     return positions            
 
 """positions[planet1.name].append((planet1.x, planet1.y, planet1.z))
@@ -152,44 +151,21 @@ def simulate_and_plot(system, simulation_years=15):
     For example:
     {
         "Earth": [(x1, y1, z1), (x2, y2, z2), ...],
-    }
-    """
+    # Updates the positions of celestial bodies for each frame in the animation.
+    def update(frame):
+        ...
+    }"""
 
     dt = 1 / 365  # time step duration in years (1 day)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     time_steps = int(simulation_years * 365)  # Total number of days in the simulation
+    
 
-    # Calculate positions for all planets
-    positions = calculate_position(dt, None, None)
-
-    # Create a line for each planet
-    lines = {}
-    for planet_name in positions:
-        # Plot the initial position
-        x0, y0, z0 = positions[planet_name][0] if positions[planet_name] else (0, 0, 0)
-        line, = ax.plot([x0], [y0], [z0], marker='o', label=planet_name)
-        lines[planet_name] = line
-
-    ax.legend()
-
-    def update(frame):
-        print(f"\nUpdating frame {frame}\n")  # Debugging output
-    # Add a background image
-    import os
-    texture_path = "textures/astar.jpg"
-    if os.path.exists(texture_path):
-        background_image = plt.imread(texture_path)  # test texture
-        #plt.show(background_image)
-        # You can use the background image as needed, e.g., as a plot background
-    else:
-        print(f"\n Warning: Background texture file '{texture_path}' not found.\n")
-
-    # Simulate and plot the solar system
-    ani = FuncAnimation(fig, update, frames=time_steps, blit=False) # type: ignore
-    plt.show()  # Ensure the animation is displayed
-    return ani
-    """# Run the simulation and plot the results
+    def update(frame, positions, lines):
+        print(f"Updating frame {frame}")  # Debugging output
+        for planet_name, line in lines.items():
+            if planet_name in positions and frame < len(positions[planet_name]):
                 x, y, z = positions[planet_name][frame]
                 print(f"Planet {planet_name}: Position ({x}, {y}, {z})")  # Debugging output
                 line.set_data([x], [y])
@@ -199,23 +175,18 @@ def simulate_and_plot(system, simulation_years=15):
         return lines.values()
     
     # Add a background image
-    import os
-    texture_path = "textures/astar.jpg"
-    if os.path.exists(texture_path):
-        background_image = plt.imread(texture_path)  # test texture
-    # Removed recursive call to simulate_and_plot to prevent infinite recursion
-    else:
-        print(f"Warning: Background texture file '{texture_path}' not found.")
+    background_image = plt.imread("textures/astar.jpg")  # test texture
+    ax.imshow(background_image, extent=(-1, 1, -1, 1), aspect='auto', zorder=-1)
     
     # Simulate and plot the solar system
     ani = simulate_and_plot(system, simulation_years)
     ani = FuncAnimation(fig, update, frames=time_steps, blit=False)
     plt.show()  # Ensure the animation is displayed
     return ani
-    # Run the simulation and plot the results"""
+    # Run the simulation and plot the results
 
 if __name__ == "__main__":
-    calculate_position(system=SolarSystem, dt=1/365, positions=None )
+    calculate_position(system = SolarSystem, dt=1/365, positions=None )
     main(simulation_years=15)
     simulate_and_plot(system=SolarSystem)
     print ("hello world")
